@@ -10,11 +10,11 @@ trait HasPoints
 
 
     /**
-     * Get the current balance for the user.
+     * Get the current points tally for the user.
      *
      * @return int
      */
-    public function getCurrentBalance(): int
+    public function getCurrentPoints(): int
     {
         $creditSum = $this->points()->where('transaction_type', 'CREDIT')->sum('amount');
         $debitSum = $this->points()->where('transaction_type', 'DEBIT')->sum('amount');
@@ -23,24 +23,24 @@ trait HasPoints
     }
 
     /**
-     * Debit a specified amount from the user's balance.
+     * Debit a specified amount of points from the user's tally.
      *
      * @param int $amount
      * @return void
      * @throws \Exception
      */
-    public function debit(int $amount, string $note = null): void
+    public function debitPoints(int $amount, string $note = null): void
     {
         $this->makeTransaction($amount, 'DEBIT', $note);
     }
 
     /**
-     * Credit a specified amount to the user's balance.
+     * Credit a specified amount of points to the user's tally.
      *
      * @param int $amount
      * @return void
      */
-    public function credit(int $amount, string $note = null): void
+    public function creditPoints(int $amount, string $note = null): void
     {
         $this->makeTransaction($amount, 'CREDIT', $note);
     }
