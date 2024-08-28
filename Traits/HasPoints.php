@@ -58,6 +58,7 @@ trait HasPoints
 
     public function makePointsTransaction(int $amount, string $type, string $note = null): void
     {
+        $type = strtoupper($type);
         if (!in_array($type, ['CREDIT', 'DEBIT'])) {
             throw new \Exception("Invalid transaction type. It must be either 'CREDIT' or 'DEBIT'.");
         }
