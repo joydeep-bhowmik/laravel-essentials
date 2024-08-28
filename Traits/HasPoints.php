@@ -52,7 +52,7 @@ trait HasPoints
      */
     public function points()
     {
-        return Point::where('user_id', $this->id)->get();
+        return $this->morphMany(Point::class, 'pointable');
     }
 
 
@@ -76,5 +76,13 @@ trait HasPoints
             'transaction_type' => $type,
             'note' => $note
         ]);
+    }
+
+    protected static function bootHasPoints()
+    {
+        static::deleting(function ($model) {
+            // Automatically delete related points on model deletion
+            $model->points()->delete();
+        });
     }
 }
