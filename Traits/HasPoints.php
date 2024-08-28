@@ -67,7 +67,7 @@ trait HasPoints
             throw new \Exception("The amount must be positive.");
         }
 
-        if ($type === 'DEBIT' && $amount > $this->getCurrentBalance()) {
+        if ($type === 'DEBIT' && $amount > $this->getCurrentPoints()) {
             throw new \Exception("Insufficient balance to debit the specified amount.");
         }
 
