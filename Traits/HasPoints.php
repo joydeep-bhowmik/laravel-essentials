@@ -31,7 +31,7 @@ trait HasPoints
      */
     public function debitPoints(int $amount, string $note = null): void
     {
-        $this->makeTransaction($amount, 'DEBIT', $note);
+        $this->makePointsTransaction($amount, 'DEBIT', $note);
     }
 
     /**
@@ -42,7 +42,7 @@ trait HasPoints
      */
     public function creditPoints(int $amount, string $note = null): void
     {
-        $this->makeTransaction($amount, 'CREDIT', $note);
+        $this->makePointsTransaction($amount, 'CREDIT', $note);
     }
 
     /**
@@ -56,7 +56,7 @@ trait HasPoints
     }
 
 
-    public function makeTransaction(int $amount, string $type, string $note = null): void
+    public function makePointsTransaction(int $amount, string $type, string $note = null): void
     {
         if (!in_array($type, ['CREDIT', 'DEBIT'])) {
             throw new \Exception("Invalid transaction type. It must be either 'CREDIT' or 'DEBIT'.");
