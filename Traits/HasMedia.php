@@ -13,9 +13,9 @@ trait HasMedia
     private object $__currentMediaCollection;
 
 
-    protected static function booted()
+    protected static function bootHasMedia()
     {
-        static::deleted(function ($model) {
+        static::deleting(function ($model) {
             Media::where('model_type', class_basename($model))?->delete();
             // ...
         });
