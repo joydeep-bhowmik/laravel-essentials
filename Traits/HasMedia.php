@@ -141,9 +141,7 @@ trait HasMedia
     {
         // Extract the photo IDs from the input array
         $ids = collect($items)->pluck('value')->toArray();
-
-
-
+        
         // Fetch all photos that match the given IDs
         $this->media($collection)->whereIn('id', $ids)
             ->get()
