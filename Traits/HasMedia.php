@@ -13,15 +13,14 @@ trait HasMedia
 
     private object $__currentMediaCollection;
 
-    function findMediaByUserId(string $id)
+    function findMediaByUploaderId(string $id)
     {
-        return  Media::where('user_id', $id);
+        return Media::where('user_id', $id);
     }
 
-    function findMediaByUser(User $user)
+    function findMediaByUploader(User $user)
     {
-
-        return  $this->findMediaByUserId($user->id);
+        return $this->findMediaByUploaderId($user->id);
     }
 
     protected static function bootHasMedia()
