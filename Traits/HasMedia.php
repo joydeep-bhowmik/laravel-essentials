@@ -26,10 +26,15 @@ trait HasMedia
 
     protected static function bootHasMedia()
     {
-        static::deleting(function ($model) {
+        return static::deleting(function ($model) {
             Media::where('model_type', class_basename($model))?->delete();
             // ...
         });
+    }
+
+    public function hasMedia(string $collectionName = ''): bool
+    {
+        return $this->media($collectionName)->get() ? true : false;
     }
 
     function addMedia(UploadedFile $files)
