@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\User;
 use App\Models\Media;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,16 @@ trait HasMedia
 
     private object $__currentMediaCollection;
 
+    function findMediaByUserId(string $id)
+    {
+        return  Media::where('user_id', $id);
+    }
+
+    function findMediaByUser(User $user)
+    {
+
+        return  $this->findMediaByUserId($user->id);
+    }
 
     protected static function bootHasMedia()
     {
@@ -36,8 +47,7 @@ trait HasMedia
     }
 
 
-
-    function toCollection(string $name = 'uploads', string $disk = null)
+    function toCollection(string $name = 'uploads', string $disk = null, $folder = null)
     {
 
         $user = auth()->user();
@@ -45,6 +55,9 @@ trait HasMedia
         $the_disk = $disk ?? config('media.disk');
 
         foreach ($this->__mediaFiles as $file) {
+
+
+            $default_directory = config('media.default_directory') ?? 'uploads';
 
             $media = new Media();
 
@@ -66,21 +79,26 @@ trait HasMedia
 
             $media->disk = $the_disk;
 
-            if ($file->storeAs('uploads/',   $file_name, $the_disk)) {
+            $media->directory =  trim($folder, '/');
+
+            if ($file->storeAs(trim($default_directory, '/') . '/' . $folder,   $file_name, $the_disk)) {
 
                 $media->save();
             }
         }
     }
 
-    function deleteMediaCollection(string $name)
+    function deleteMediaCollection(string $collection)
     {
-        $media = $this->media($name);
+        $media = $this->media($collection);
 
         $the_disk = $disk ?? config('media.disk');
 
+
+        $default_directory = config('media.default_directory') ?? 'uploads';
+
         foreach ($media->get() as $m) {
-            $filepath = 'uploads/' . $m->file_name;
+            $filepath = trim($default_directory, '/') . '/' . ($m->directory ? $m->directory . '/' : '') . $m->file_name;
             Storage::disk($the_disk)->exists($filepath) && Storage::disk($the_disk)->delete($filepath);
         }
 
@@ -89,15 +107,7 @@ trait HasMedia
 
     function deleteAllMedia()
     {
-        $media = $this->media();
-
-        foreach ($media->get() as $m) {
-
-            $the_disk = $m->disk ?? config('media.disk');
-            $filepath = 'uploads/' . $m->file_name;
-            Storage::disk($the_disk)->exists($filepath) && Storage::disk($the_disk)->delete($filepath);
-        }
-        return $media?->delete();
+        return $this->deleteMediaCollection('*');
     }
 
     function media(string $collection = null)
