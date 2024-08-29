@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Media extends Model
 {
     use HasFactory;
+
+
+
     protected $fillable = [
         'file_name',
         'original_file_name',
@@ -25,28 +28,29 @@ class Media extends Model
     /**
      * Get the URL of the media file.
      */
-    public function getUrl(): string
+    public function getUrl(): string| null
     {
+
+        $default_directory = config('media.default_directory') ?? 'uploads';
+
         $disk = $this->disk ?? config('media.disk'); // Use the media disk or fallback to the default
 
         // Get the file path relative to the storage
-        $filePath = 'uploads/' . $this->file_name;
+        $filePath = trim($default_directory, '/') . '/' . ($this->directory ? $this->directory . '/' : '') . $this->file_name;
 
         // Return the URL based on the disk configuration
         return Storage::disk($disk)->url($filePath);
     }
 
-
-
-
-
     protected static function boot()
     {
         parent::boot();
 
-        static::deleting(function ($model) {
+        $default_directory = config('media.default_directory') ?? 'uploads';
+
+        static::deleting(function ($model) use ($default_directory) {
             $disk = $model->disk ?? config('media.disk'); // Fallback to default disk
-            $filePath = 'uploads/' . $model->file_name;
+            $filePath = trim($default_directory, '/') . '/' . ($model->directory ? $model->directory . '/' : '') . $model->file_name;
 
             // Check if the file exists before attempting to delete
             if (Storage::disk($disk)->exists($filePath)) {
