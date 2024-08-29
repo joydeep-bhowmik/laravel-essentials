@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('original_file_name');
             $table->string('mime_type');
+            $table->string('directory')->nullable();
             $table->string('collection')->nullable();
             $table->unsignedBigInteger('model_id');
             $table->string('model_type');
