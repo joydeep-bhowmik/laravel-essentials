@@ -75,11 +75,11 @@ trait HasMedia
 
     function deleteMediaCollection(string $name)
     {
-        $media = $this->media($name)->get();
+        $media = $this->media($name);
 
         $the_disk = $disk ?? config('media.disk');
 
-        foreach ($media as $m) {
+        foreach ($media->get() as $m) {
             $filepath = 'uploads/' . $m->file_name;
             Storage::disk($the_disk)->exists($filepath) && Storage::disk($the_disk)->delete($filepath);
         }
@@ -91,7 +91,7 @@ trait HasMedia
     {
         $media = $this->media();
 
-        foreach ($media as $m) {
+        foreach ($media->get() as $m) {
 
             $the_disk = $m->disk ?? config('media.disk');
             $filepath = 'uploads/' . $m->file_name;
@@ -141,7 +141,9 @@ trait HasMedia
     {
         // Extract the photo IDs from the input array
         $ids = collect($items)->pluck('value')->toArray();
-        
+
+
+
         // Fetch all photos that match the given IDs
         $this->media($collection)->whereIn('id', $ids)
             ->get()
